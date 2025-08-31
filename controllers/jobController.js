@@ -66,6 +66,31 @@ async function postJob(req, res) {
   }
 }
 
+
+async function getAllJobs(req, res) {
+  try {
+    // Step 1: Ensure the user is logged in
+    if (!req.user) {
+      return res.status(401).json({ message: "You must be logged in to view the jobs" });
+    }
+
+    // Step 2: Fetch all jobs from the database
+    const jobs = await Job.find();  // No filter, just fetch all jobs
+
+    // Step 3: If no jobs found, return a message
+    if (jobs.length === 0) {
+      return res.status(404).json({ message: "No jobs available" });
+    }
+
+    // Step 4: Return the jobs
+    return res.status(200).json({ jobs });
+
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    return res.status(500).json({ message: "Server error, please try again" });
+  }
+}
+
 async function getJobsByUser(req, res) {
   try {
     // Step 1: Ensure the user is logged in
@@ -182,7 +207,7 @@ async function deleteJob(req, res) {
     }
 
     // Step 6: Delete the job
-    await job.remove();
+    await Job.findByIdAndDelete(jobId); 
 
     // Step 7: Send success response
     return res.status(200).json({ message: "Job deleted successfully" });
@@ -192,4 +217,4 @@ async function deleteJob(req, res) {
   }
 }
 
-module.exports = { postJob, getJobsByUser, updateJob, deleteJob };
+module.exports = { postJob, getAllJobs, getJobsByUser, updateJob, deleteJob };
