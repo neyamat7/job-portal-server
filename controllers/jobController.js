@@ -66,6 +66,33 @@ async function postJob(req, res) {
   }
 }
 
+async function getJobsByUser(req, res) {
+  try {
+    // Step 1: Ensure the user is logged in
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ message: "You must be logged in to view jobs" });
+    }
 
+    // Step 2: Get the logged-in user's ID
+    const userId = req.user.sub; // `req.user.sub` is the user ID from the JWT token
+
+    // Step 3: Query the database to find jobs posted by the user
+    const jobs = await Job.find({ postedBy: userId }) // Correct field: postedBy
+      .populate("postedBy", "email"); // Populating the user details (like name, email)
+
+    // Step 4: If no jobs are found, return a message
+    if (jobs.length === 0) {
+      return res.status(404).json({ message: "No jobs found for this user" });
+    }
+
+    // Step 5: Return the found jobs
+    return res.status(200).json({ jobs });
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    return res.status(500).json({ message: "Server error, please try again" });
+  }
+}
 
 module.exports = { postJob, getJobsByUser };
