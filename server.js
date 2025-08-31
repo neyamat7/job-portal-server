@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const { connectDB } = require("./db");
 
 const authRoutes = require("./routes/authRoutes");
+const jobRoutes = require("./routes/jobRoutes");
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.get("/", (req, res) => res.send("Server start"));
 
 // Mount routes
 app.use("/api/auth", authRoutes);
+app.use("/api/jobs", jobRoutes)
 
 connectDB().then(() => {
   app.listen(port, () => console.log(`✅ Server is running on ${port}`));

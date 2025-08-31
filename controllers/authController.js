@@ -101,7 +101,30 @@ async function logoutUser(_req, res) {
 }
 
 async function me(req, res) {
-  res.json({ ok: true, user: req.user });
+  try {
+    // req.user comes from the JWT payload attached by the requireAuth middleware
+    const userId = req.user.sub;
+
+    // Fetch the user from the database using the ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Prepare the safe user data to return (excluding sensitive info like password)
+    const safeUser = {
+      id: user._id,
+      email: user.email,
+      createdAt: user.createdAt,
+    };
+
+    // Respond with the user's data
+    res.json({ ok: true, user: safeUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
 }
 
 module.exports = { registerUser, loginUser, logoutUser, me };
