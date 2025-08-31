@@ -1,5 +1,9 @@
 const express = require("express");
-const { postJob, getJobsByUser } = require("../controllers/jobController");
+const {
+  postJob,
+  getJobsByUser,
+  updateJob,
+} = require("../controllers/jobController");
 const { requireAuth } = require("../utils/requireAuth"); // Ensure the user is logged in
 
 const router = express.Router();
@@ -7,5 +11,6 @@ const router = express.Router();
 // Route to post a job (only for logged-in users)
 router.post("/post", requireAuth, postJob); // Protected route
 router.get("/user", requireAuth, getJobsByUser); // Protected route
+router.patch("/:id", requireAuth, updateJob);
 
 module.exports = router;

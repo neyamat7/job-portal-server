@@ -95,4 +95,63 @@ async function getJobsByUser(req, res) {
   }
 }
 
-module.exports = { postJob, getJobsByUser };
+async function updateJob(req, res) {
+  try {
+    // Step 1: Ensure the user is logged in
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ message: "You must be logged in to update a job" });
+    }
+
+    // Step 2: Get the job ID from the request params
+    const jobId = req.params.id;
+
+    // Step 3: Find the job in the database
+    const job = await Job.findById(jobId);
+
+    // Step 4: Check if the job exists
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    // Step 5: Check if the logged-in user is the owner of the job
+    if (job.postedBy.toString() !== req.user.sub) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to update this job" });
+    }
+
+    // Step 6: Update the job details from the request body
+    const {
+      title,
+      salaryRange,
+      jobType,
+      description,
+      categories,
+      jobLevel,
+      remoteOrOnsite,
+      freelancerCount,
+    } = req.body;
+
+    job.title = title || job.title;
+    job.salaryRange = salaryRange || job.salaryRange;
+    job.jobType = jobType || job.jobType;
+    job.description = description || job.description;
+    job.categories = categories || job.categories;
+    job.jobLevel = jobLevel || job.jobLevel;
+    job.remoteOrOnsite = remoteOrOnsite || job.remoteOrOnsite;
+    job.freelancerCount = freelancerCount || job.freelancerCount;
+
+    // Step 7: Save the updated job
+    await job.save();
+
+    // Step 8: Return the updated job
+    return res.status(200).json({ message: "Job updated successfully", job });
+  } catch (error) {
+    console.error("Error updating job:", error);
+    return res.status(500).json({ message: "Server error, please try again" });
+  }
+}
+
+module.exports = { postJob, getJobsByUser, updateJob };
