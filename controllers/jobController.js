@@ -154,4 +154,42 @@ async function updateJob(req, res) {
   }
 }
 
-module.exports = { postJob, getJobsByUser, updateJob };
+async function deleteJob(req, res) {
+  try {
+    // Step 1: Ensure the user is logged in
+    if (!req.user) {
+      return res
+        .status(401)
+        .json({ message: "You must be logged in to delete a job" });
+    }
+
+    // Step 2: Get the job ID from the request params
+    const jobId = req.params.id;
+
+    // Step 3: Find the job in the database
+    const job = await Job.findById(jobId);
+
+    // Step 4: Check if the job exists
+    if (!job) {
+      return res.status(404).json({ message: "Job not found" });
+    }
+
+    // Step 5: Ensure the logged-in user is the owner of the job
+    if (job.postedBy.toString() !== req.user.sub) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this job" });
+    }
+
+    // Step 6: Delete the job
+    await job.remove();
+
+    // Step 7: Send success response
+    return res.status(200).json({ message: "Job deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting job:", error);
+    return res.status(500).json({ message: "Server error, please try again" });
+  }
+}
+
+module.exports = { postJob, getJobsByUser, updateJob, deleteJob };
