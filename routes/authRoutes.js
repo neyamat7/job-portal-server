@@ -4,6 +4,7 @@ const {
   loginUser,
   logoutUser,
   me,
+  refreshAccessToken,
 } = require("../controllers/authController");
 const { requireAuth } = require("../utils/requireAuth");
 

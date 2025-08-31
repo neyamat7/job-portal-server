@@ -50,7 +50,7 @@ app.get("/", (req, res) => res.send("Server start"));
 
 // Mount routes
 app.use("/api/auth", authRoutes);
-app.use("/api/jobs", jobRoutes)
+app.use("/api/jobs", jobRoutes);
 
 connectDB().then(() => {
   app.listen(port, () => console.log(`✅ Server is running on ${port}`));

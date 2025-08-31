@@ -1,8 +1,12 @@
 // controllers/authController.js
 const User = require("../models/User");
+const cookie = require("cookie-parser");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const COOKIE_NAME = process.env.COOKIE_NAME;
+
+const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 async function registerUser(req, res) {
   try {
@@ -69,14 +73,14 @@ async function loginUser(req, res) {
       role: user.role || "user",
     };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "15m",
+      expiresIn: "1h",
     });
 
     res.cookie(COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 15 * 60 * 1000, // 15 min
+      maxAge: 60 * 60 * 1000, // 1h
       path: "/",
     });
 
@@ -127,4 +131,9 @@ async function me(req, res) {
   }
 }
 
-module.exports = { registerUser, loginUser, logoutUser, me };
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  me,
+};
