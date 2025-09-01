@@ -36,17 +36,25 @@ app.use(cookieParser());
 //   })
 // );
 
+// app.use(
+//   cors({
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin))
+//         return callback(null, true);
+//       return callback(new Error("Not allowed by CORS: " + origin));
+//     },
+//     credentials: true, // send cookies
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//   })
+// );
+
 app.use(
   cors({
-    origin: function (origin, callback) {
-      // allow tools like curl/postman (no origin) and our dev frontends
-      if (!origin || allowedOrigins.includes(origin))
-        return callback(null, true);
-      return callback(new Error("Not allowed by CORS: " + origin));
-    },
-    credentials: true, // send cookies
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: "*", // Allow requests from any origin (adjust if needed)
+    credentials: true, // Allow cookies to be sent
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   })
 );
 
