@@ -13,7 +13,11 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
-const allowedOrigins = ["http://localhost:3000", "http://127.0.0.1:3000"];
+const allowedOrigins = [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://new-job-portal-kappa.vercel.app",
+];
 
 app.use((req, _res, next) => {
   if (req.headers.origin && req.method !== "OPTIONS") {
