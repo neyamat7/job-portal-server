@@ -53,40 +53,84 @@ async function registerUser(req, res) {
   }
 }
 
+// async function loginUser(req, res) {
+//   try {
+//     const { email, password } = req.body;
+//     if (!email || !password)
+//       return res.status(400).json({ message: "Email and password required" });
+
+//     const user = await User.findOne({ email }).select("+password");
+//     if (!user)
+//       return res.status(400).json({ message: "Invalid email or password" });
+
+//     const ok = await bcrypt.compare(password, user.password);
+//     if (!ok)
+//       return res.status(400).json({ message: "Invalid email or password" });
+
+//     const payload = {
+//       sub: user._id.toString(),
+//       email: user.email,
+//       role: user.role || "user",
+//     };
+//     const token = jwt.sign(payload, process.env.JWT_SECRET, {
+//       expiresIn: "1h",
+//     });
+
+//     res.cookie(COOKIE_NAME, token, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       sameSite: "None",
+//       maxAge: 60 * 60 * 1000, // 1h
+//       path: "/",
+//     });
+
+//     res.json({
+//       ok: true,
+//       user: { id: user._id, email: user.email },
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// }
+
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
+
+    // Check if email and password are provided
     if (!email || !password)
       return res.status(400).json({ message: "Email and password required" });
 
+    // Find the user by email and select the password field
     const user = await User.findOne({ email }).select("+password");
+
+    // If no user is found, return an error
     if (!user)
       return res.status(400).json({ message: "Invalid email or password" });
 
+    // Compare the provided password with the stored hashed password
     const ok = await bcrypt.compare(password, user.password);
     if (!ok)
       return res.status(400).json({ message: "Invalid email or password" });
 
+    // Create a payload for the JWT token
     const payload = {
       sub: user._id.toString(),
       email: user.email,
       role: user.role || "user",
     };
+
+    // Sign the JWT token
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
       expiresIn: "1h",
     });
 
-    res.cookie(COOKIE_NAME, token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "None",
-      maxAge: 60 * 60 * 1000, // 1h
-      path: "/",
-    });
-
+    // Send the token in the response body instead of cookies
     res.json({
       ok: true,
       user: { id: user._id, email: user.email },
+      token: token, // Include token in response
     });
   } catch (error) {
     console.log(error);
