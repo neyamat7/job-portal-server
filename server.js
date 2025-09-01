@@ -13,18 +13,18 @@ const app = express();
 
 const port = process.env.PORT || 5000;
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "http://127.0.0.1:3000",
-  "https://new-job-portal-kappa.vercel.app",
-];
+// const allowedOrigins = [
+//   "http://localhost:3000",
+//   "http://127.0.0.1:3000",
+//   "https://new-job-portal-kappa.vercel.app",
+// ];
 
-app.use((req, _res, next) => {
-  if (req.headers.origin && req.method !== "OPTIONS") {
-    console.log("Origin:", req.headers.origin);
-  }
-  next();
-});
+// app.use((req, _res, next) => {
+//   if (req.headers.origin && req.method !== "OPTIONS") {
+//     console.log("Origin:", req.headers.origin);
+//   }
+//   next();
+// });
 
 // middlewares
 app.use(express.json());
@@ -36,27 +36,27 @@ app.use(cookieParser());
 //   })
 // );
 
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin))
-        return callback(null, true);
-      return callback(new Error("Not allowed by CORS: " + origin));
-    },
-    credentials: true, // send cookies
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
-
 // app.use(
 //   cors({
-//     origin: "*", // Allow requests from any origin (adjust if needed)
-//     credentials: true, // Allow cookies to be sent
-//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], // Allowed HTTP methods
-//     allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin))
+//         return callback(null, true);
+//       return callback(new Error("Not allowed by CORS: " + origin));
+//     },
+//     credentials: true, // send cookies
+//     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
 //   })
 // );
+
+app.use(
+  cors({
+    origin: "*", // Allow requests from any origin (adjust if needed)
+    credentials: true, // Allow cookies to be sent
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  })
+);
 
 app.get("/", (req, res) => res.send("Server start"));
 
