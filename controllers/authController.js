@@ -79,7 +79,7 @@ async function loginUser(req, res) {
     res.cookie(COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: "None",
       maxAge: 60 * 60 * 1000, // 1h
       path: "/",
     });
