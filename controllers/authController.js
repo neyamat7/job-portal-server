@@ -5,8 +5,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const COOKIE_NAME = process.env.COOKIE_NAME;
 
-const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET;
-const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
+const ACCESS_TOKEN_SECRET = process.env.JWT_SECRET; 
 
 async function registerUser(req, res) {
   try {
@@ -53,46 +52,7 @@ async function registerUser(req, res) {
   }
 }
 
-// async function loginUser(req, res) {
-//   try {
-//     const { email, password } = req.body;
-//     if (!email || !password)
-//       return res.status(400).json({ message: "Email and password required" });
-
-//     const user = await User.findOne({ email }).select("+password");
-//     if (!user)
-//       return res.status(400).json({ message: "Invalid email or password" });
-
-//     const ok = await bcrypt.compare(password, user.password);
-//     if (!ok)
-//       return res.status(400).json({ message: "Invalid email or password" });
-
-//     const payload = {
-//       sub: user._id.toString(),
-//       email: user.email,
-//       role: user.role || "user",
-//     };
-//     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-//       expiresIn: "1h",
-//     });
-
-//     res.cookie(COOKIE_NAME, token, {
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === "production",
-//       sameSite: "None",
-//       maxAge: 60 * 60 * 1000, // 1h
-//       path: "/",
-//     });
-
-//     res.json({
-//       ok: true,
-//       user: { id: user._id, email: user.email },
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// }
+ 
 
 async function loginUser(req, res) {
   try {
