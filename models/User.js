@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, trim: true }, // optional; we'll fill if missing
+    name: { type: String, trim: true },  
     email: {
       type: String,
       required: true,
